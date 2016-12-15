@@ -52,7 +52,10 @@ public final class DateUtils
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
 
-        return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, LOCALE);
+        String result = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, LOCALE);
+        result = result.substring(0, 1).toUpperCase() + result.substring(1);
+
+        return result;
     }
 
     public static boolean equalsDayOfWeek(Date date, int dayOfWeek)

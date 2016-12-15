@@ -117,6 +117,10 @@ public final class DataProvider
             if (DateUtils.isDate(date))
             {
                 Day day = new Day(date);
+                try {
+                    day.setDayOfWeek(DateUtils.getDayOfWeekName(DateUtils.toDate(date)));
+                } catch (ParseException ignored) {}
+
                 i++;
                 do
                 {

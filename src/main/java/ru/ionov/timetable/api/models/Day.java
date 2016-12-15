@@ -7,6 +7,7 @@ import java.util.List;
 public class Day implements Serializable
 {
     private String date;
+    private String dayOfWeek;
     private List<Lesson> lessons;
 
     public Day()
@@ -18,9 +19,14 @@ public class Day implements Serializable
         this.date = date;
     }
 
-    public Day(String date, List<Lesson> lessons)
-    {
+    public Day(String date, String dayOfWeek) {
         this.date = date;
+        this.dayOfWeek = dayOfWeek;
+    }
+
+    public Day(String date, String dayOfWeek, List<Lesson> lessons) {
+        this.date = date;
+        this.dayOfWeek = dayOfWeek;
         this.lessons = lessons;
     }
 
@@ -32,6 +38,14 @@ public class Day implements Serializable
     public void setDate(String date)
     {
         this.date = date;
+    }
+
+    public String getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(String dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
     }
 
     public List<Lesson> getLessons()
