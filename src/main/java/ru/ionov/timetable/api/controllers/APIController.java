@@ -2,10 +2,7 @@ package ru.ionov.timetable.api.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.ionov.timetable.api.models.Criterion;
 import ru.ionov.timetable.api.models.DateRange;
 import ru.ionov.timetable.api.models.Day;
@@ -17,6 +14,7 @@ import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 public class APIController {
 
