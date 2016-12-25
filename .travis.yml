@@ -1,12 +1,3 @@
 language: java
 jdk:
 - oraclejdk8
-deploy:
-  provider: openshift
-  user: orlicus@gmail.com
-  password:
-    secure: f1uVVZsAKM7p8DYLP2z1Tu6KFpQ6cacQA5q7nVLazb7gbEwVl67eNgIEIAGPckoF93412mvp3KTnbMDM8zrv1VwP9OmFXBz5xVCaNb5LGEm6LIb7ai4+lVt2m/OoItzU0F0cFkOiJvCxzD0VjceSwLwVseg0KlSDhOYRWTqLj9FTIqLL3J6eeLUyXoRrmsBme0pFFi2QQbMwN3SR1P6BA4W5hunAzrXTrZxH7jpclEHlCa3KmSEDCYtq/A9jUX0U1TMVqwcg/YbljrAV2kkSbocbeUwS+HkIdAH2MIJAahzcEldukVhJ5DrRHwAcHdi/aCevKO9uBQLUI03kJCUE5R0Ejg3QU2xBrznprIP3DS7hmSK7wvBFvR0CB/cvEaMEjWCNJ/XozHV0oJjs8fVWA8pHCMpTpLTfLtHWLalzKvm4rzwGJlcKvKXVInaMWyrK0icT4IXxemUP5aU4KbEBQ+0808gxmSRDRJTBE+p5JnDKifQcsda8O+CRV/yjayjceAGkVGvTlOJ/6i14zhFsr0lQdYOhpy6zyp3Pnz/yVexE6X4pMYR7tVTJ0VR3NN+0OANe+bxMBbCuJsx1q3qYCGLj9yVqzZ0nzSlzdSlNvnYEPwsBs8K0ASatYxCQzGK4dbDCmYb81wkoXeYoGt/zhG2GDtmib7hz9W92flkbpw8=
-  app: timetableapi
-  domain: ocassio
-  on:
-    repo: ocassio/timetable-api
