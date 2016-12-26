@@ -5,24 +5,25 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import ru.ionov.timetable.api.models.Criterion;
+import ru.ionov.timetable.api.models.Day;
+import ru.ionov.timetable.api.models.Lesson;
+import ru.ionov.timetable.api.models.TimeRange;
+import ru.ionov.timetable.api.utils.DateUtils;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import ru.ionov.timetable.api.models.Criterion;
-import ru.ionov.timetable.api.models.DateRange;
-import ru.ionov.timetable.api.models.Day;
-import ru.ionov.timetable.api.models.Lesson;
-import ru.ionov.timetable.api.models.TimeRange;
-import ru.ionov.timetable.api.utils.DateUtils;
-
-public final class DataProvider
+@Service
+public class DataProvider
 {
     private static final String TIMETABLE_URL = "http://www.tolgas.ru/services/raspisanie/";
     private static final String POST_DATA_CHARSET = "windows-1251";
@@ -56,9 +57,10 @@ public final class DataProvider
         }
     };
 
-    private DataProvider() {}
+    private String timestamp;
 
-    public static List<Criterion> getCriteria(int criteriaType) throws IOException
+    @Cacheable(value = "criteria", key = "#criteriaType")
+    public List<Criterion> getCriteria(int criteriaType) throws IOException
     {
         List<Criterion> criteria = new ArrayList<>();
 
@@ -67,6 +69,8 @@ public final class DataProvider
                 .method(Connection.Method.GET)
                 .data("id", Integer.toString(criteriaType))
                 .get();
+
+        evictCacheIfNeeded(document);
 
         Elements elements = document.select("#vr option");
 
@@ -78,7 +82,8 @@ public final class DataProvider
         return criteria;
     }
 
-    public static List<Day> getTimetable(int criteriaType, String criterion, Date from, Date to) throws IOException
+    @Cacheable(value = "timetable", key = "#criteriaType + '|' + #criterion + '|' + #from + '|' + #to")
+    public List<Day> getTimetable(int criteriaType, String criterion, Date from, Date to) throws IOException
     {
         Document document = Jsoup.connect(TIMETABLE_URL)
                 .postDataCharset(POST_DATA_CHARSET)
@@ -91,6 +96,8 @@ public final class DataProvider
                 .data("submit_button", "ПОКАЗАТЬ")
                 .post();
 
+        evictCacheIfNeeded(document);
+
         Elements elements = document.select("#send td.hours");
         if (elements.isEmpty())
         {
@@ -100,7 +107,24 @@ public final class DataProvider
         return getDays(elements);
     }
 
-    private static List<Day> getDays(Elements elements)
+    @CacheEvict(value = {"timetable", "criteria"}, allEntries = true)
+    @Scheduled(fixedDelay = 60 * 60 * 1000)
+    public void evictCache() {
+
+    }
+
+    private void evictCacheIfNeeded(Document document) {
+        Elements elements = document.select(".last_mod");
+        if (elements.isEmpty()) return;
+
+        String newTimestamp = elements.get(0).ownText();
+        if (timestamp != null && !timestamp.equals(newTimestamp)) {
+            evictCache();
+        }
+        timestamp = newTimestamp;
+    }
+
+    private List<Day> getDays(Elements elements)
     {
         List<Day> days = new ArrayList<>();
 
@@ -145,7 +169,7 @@ public final class DataProvider
         return days;
     }
 
-    private static void setTimeRanges(String stringDate, Lesson lesson)
+    private void setTimeRanges(String stringDate, Lesson lesson)
     {
         try
         {

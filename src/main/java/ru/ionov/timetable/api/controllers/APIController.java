@@ -2,6 +2,7 @@ package ru.ionov.timetable.api.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,10 +23,17 @@ public class APIController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APIController.class);
 
+    private final DataProvider dataProvider;
+
+    @Autowired
+    public APIController(DataProvider dataProvider) {
+        this.dataProvider = dataProvider;
+    }
+
     @RequestMapping("/criteria/{id}")
     public List<Criterion> getCriteria(@PathVariable("id") int criteriaType) {
         try {
-            return DataProvider.getCriteria(criteriaType);
+            return dataProvider.getCriteria(criteriaType);
         } catch (NumberFormatException e) {
             LOGGER.error("Wrong criteria type id format", e);
         } catch (IOException e) {
@@ -67,7 +75,7 @@ public class APIController {
         }
 
         try {
-            return DataProvider.getTimetable(criteriaType, criterion, dateRange.getFrom(), dateRange.getTo());
+            return dataProvider.getTimetable(criteriaType, criterion, dateRange.getFrom(), dateRange.getTo());
         } catch (IOException e) {
             LOGGER.error("Problem with timetable retrieval", e);
             return Collections.emptyList();
