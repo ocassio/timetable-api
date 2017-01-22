@@ -55,4 +55,16 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>site</id>
+            <properties>
+                <activeProfiles>site</activeProfiles>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
+
 </project>
