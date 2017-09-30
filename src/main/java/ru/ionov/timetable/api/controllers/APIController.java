@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.ionov.timetable.api.exceptions.DataRetrievalException;
 import ru.ionov.timetable.api.models.Criterion;
 import ru.ionov.timetable.api.models.DateRange;
 import ru.ionov.timetable.api.models.Day;
@@ -35,12 +36,10 @@ public class APIController {
         try {
             return dataProvider.getCriteria(criteriaType);
         } catch (NumberFormatException e) {
-            LOGGER.error("Wrong criteria type id format", e);
+            throw new DataRetrievalException("Wrong criteria type id format", e);
         } catch (IOException e) {
-            LOGGER.error("Problem with criteria retrieval", e);
+            throw new DataRetrievalException("Problem with criteria retrieval", e);
         }
-
-        return Collections.emptyList();
     }
 
     @RequestMapping("/timetable")
@@ -77,8 +76,7 @@ public class APIController {
         try {
             return dataProvider.getTimetable(criteriaType, criterion, dateRange.getFrom(), dateRange.getTo());
         } catch (IOException e) {
-            LOGGER.error("Problem with timetable retrieval", e);
-            return Collections.emptyList();
+            throw new DataRetrievalException("Problem with timetable retrieval", e);
         }
     }
 

@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
@@ -28,7 +29,6 @@ import java.util.List;
 @Profile("site")
 public class SiteDataProvider implements DataProvider
 {
-    private static final String TIMETABLE_URL = "http://www.tolgas.ru/services/raspisanie/";
     private static final String POST_DATA_CHARSET = "windows-1251";
     private static final int CONNECTION_TIMEOUT = 15000;
 
@@ -60,6 +60,9 @@ public class SiteDataProvider implements DataProvider
         }
     };
 
+    @Value("${timetable.url}")
+    private String timetableUrl;
+
     private String timestamp;
 
     @Cacheable(value = "criteria", key = "#criteriaType")
@@ -68,7 +71,7 @@ public class SiteDataProvider implements DataProvider
     {
         List<Criterion> criteria = new ArrayList<>();
 
-        Document document = Jsoup.connect(TIMETABLE_URL)
+        Document document = Jsoup.connect(timetableUrl)
                 .timeout(CONNECTION_TIMEOUT)
                 .method(Connection.Method.GET)
                 .data("id", Integer.toString(criteriaType))
@@ -90,7 +93,7 @@ public class SiteDataProvider implements DataProvider
     @Override
     public List<Day> getTimetable(int criteriaType, String criterion, Date from, Date to) throws IOException
     {
-        Document document = Jsoup.connect(TIMETABLE_URL)
+        Document document = Jsoup.connect(timetableUrl)
                 .postDataCharset(POST_DATA_CHARSET)
                 .timeout(CONNECTION_TIMEOUT)
                 .method(Connection.Method.POST)
