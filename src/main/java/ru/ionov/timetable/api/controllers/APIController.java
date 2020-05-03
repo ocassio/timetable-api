@@ -76,6 +76,7 @@ public class APIController {
         try {
             return dataProvider.getTimetable(criteriaType, criterion, dateRange.getFrom(), dateRange.getTo());
         } catch (IOException e) {
+            LOGGER.error("Problem with timetable retrieval", e);
             throw new DataRetrievalException("Problem with timetable retrieval", e);
         }
     }
